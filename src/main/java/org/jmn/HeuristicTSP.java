@@ -3,6 +3,17 @@ package org.jmn;
 import java.util.Map;
 
 public class HeuristicTSP {
+    
+    public static void printTour(Tour tour){
+        TourNode current = tour.start;
+        System.out.print(current.node.label);
+        while(current.next != null){
+            System.out.print(" -> " + current.next.node.label );
+            current = current.next;
+        }
+
+        System.out.println("  =========> Cost = " + tour.cost);
+    }
 
     public static void main(String[] args) {
         Node city_1 = new Node("1", Map.ofEntries(
@@ -79,8 +90,20 @@ public class HeuristicTSP {
                 .to(city_2)
                 .to(city_1);
 
-        System.out.println("Initial tour cost: " + initialTour.cost);
-    
+        printTour(initialTour);
+        int i = 1;
+        while(i < 7){
+            /*TourNode current = initialTour.start;
+            while(current.next != null){
+                System.out.println("City: " + current.node.label + " -> " + current.next.node.label + " Cost: " + current.node.edges.get(current.next.node.label));
+                current = current.next;
+            }
+            System.out.println("City: " + current.node.label + " -> " + initialTour.start.node.label + " Cost: " + current.node.edges.get(initialTour.start.node.label));
+            System.out.println("Tour cost: " + initialTour.cost);
+            System.out.println(" ");
+            i++;*/
+            i++;
+        }
     }
 }
 
