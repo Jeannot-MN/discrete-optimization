@@ -69,7 +69,15 @@ public class HeuristicTSP {
                 Map.entry("7", 0f))
         );
 
-        Tour initialTour = new Tour().from(city_1).to(city_3).to(city_5).to(city_7).to(city_4).to(city_6).to(city_2).to(city_1);
+        Tour initialTour = new Tour()
+                .from(city_1)
+                .to(city_3)
+                .to(city_5)
+                .to(city_7)
+                .to(city_4)
+                .to(city_6)
+                .to(city_2)
+                .to(city_1);
 
         System.out.println("Initial tour cost: " + initialTour.cost);
     
