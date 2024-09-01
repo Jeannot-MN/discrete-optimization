@@ -1,23 +1,36 @@
 package org.jmn;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class HeuristicTSP {
-    
-    public static void printTour(Tour tour){
-        TourNode current = tour.start;
-        System.out.print(current.node.label);
-        while(current.next != null){
-            System.out.print(" -> " + current.next.node.label );
-            current = current.next;
-        }
 
-        System.out.println("  =========> Cost = " + tour.cost);
+    static void printTour(Tour tour) {
+        int i;
+        for (i = 0; i < tour.nodes.size() - 1; i++) {
+            System.out.print(tour.nodes.get(i).label + " -> ");
+        }
+        System.out.print(tour.nodes.get(i).label);
+
+        System.out.println("  =========> Cost = " + tour.cost());
+    }
+
+    static Tour swap(Tour tour, int i, int j) {
+        List<Node> nodes = new ArrayList<>(tour.nodes);
+        while (i < j) {
+            Node temp = nodes.get(i);
+            nodes.set(i, nodes.get(j));
+            nodes.set(j, temp);
+            i++;
+            j--;
+        }
+        return new Tour(nodes);
     }
 
     public static void main(String[] args) {
         Node city_1 = new Node("1", Map.ofEntries(
-                Map.entry("1", 0f), 
+                Map.entry("1", 0f),
                 Map.entry("2", 1.5f),
                 Map.entry("3", 3f),
                 Map.entry("4", 13f),
@@ -81,29 +94,42 @@ public class HeuristicTSP {
         );
 
         Tour initialTour = new Tour()
-                .from(city_1)
-                .to(city_3)
-                .to(city_5)
-                .to(city_7)
-                .to(city_4)
-                .to(city_6)
-                .to(city_2)
-                .to(city_1);
+                .add(city_1)
+                .add(city_3)
+                .add(city_5)
+                .add(city_7)
+                .add(city_4)
+                .add(city_6)
+                .add(city_2)
+                .add(city_1);
 
         printTour(initialTour);
+
+        Tour optimalTour = initialTour;
+
         int i = 1;
-        while(i < 7){
-            /*TourNode current = initialTour.start;
-            while(current.next != null){
-                System.out.println("City: " + current.node.label + " -> " + current.next.node.label + " Cost: " + current.node.edges.get(current.next.node.label));
-                current = current.next;
+        int j = i + 2;
+        int n = initialTour.nodes.size() - 1;
+        while (i < n - 2) {
+            Tour newTour = swap(optimalTour, i, j - 1);
+            printTour(newTour);
+
+            if (newTour.cost() < optimalTour.cost()) {
+                optimalTour = newTour;
+                i = 1;
+                j = i + 2;
             }
-            System.out.println("City: " + current.node.label + " -> " + initialTour.start.node.label + " Cost: " + current.node.edges.get(initialTour.start.node.label));
-            System.out.println("Tour cost: " + initialTour.cost);
-            System.out.println(" ");
-            i++;*/
-            i++;
+
+            j++;
+
+            if (j >= n) {
+                i++;
+                j = i + 2;
+            }
         }
+
+        System.out.println("\n\n\nOptimal Tour is :");
+        printTour(optimalTour);
     }
 }
 
@@ -117,31 +143,28 @@ class Node {
     }
 }
 
-class TourNode {
-    Node node;
-    TourNode next;
-    
-    public TourNode(Node node, TourNode next) {
-        this.node = node;
-        this.next = next;
-    }
-}
 class Tour {
-    TourNode start;
-    private TourNode lastNode;
-    
-    float cost;
-    
-    public Tour from(Node node){
-        start = new TourNode(node, null);
-        lastNode = start;
+
+    List<Node> nodes = new ArrayList<>();
+
+    public Tour() {
+    }
+
+    public Tour(List<Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    public Tour add(Node node) {
+        this.nodes.add(node);
         return this;
     }
-    
-    public Tour to(Node node){
-        lastNode.next = new TourNode(node, null);
-        cost += lastNode.node.edges.get(node.label);
-        lastNode = lastNode.next;
-        return this;
+
+    float cost() {
+        float cost = 0;
+
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            cost += nodes.get(i).edges.get(nodes.get(i + 1).label);
+        }
+        return Math.round(cost * 10.0f) / 10.0f;
     }
 }
