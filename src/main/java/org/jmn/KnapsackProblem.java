@@ -81,7 +81,7 @@ class Item {
 
     @Override
     public String toString() {
-        return "Item{" +
+        return "* Item{" +
                 "value=" + value +
                 ", weight=" + weight +
                 ", efficiency=" + efficiency() +
